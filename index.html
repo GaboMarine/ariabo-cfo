@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#FBFBFE">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Ariabo CFO</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="notif" class="notif"></div>
+<div id="dialog" class="dialog-overlay hidden"></div>
+
+<!-- Login -->
+<div id="loginScreen" class="login-wrap">
+  <div class="login-logo-sub">Ariabo</div>
+  <div class="login-logo-main">CFO</div>
+  <div class="login-subtitle">Finanzas compartidas del hogar</div>
+  <div class="login-box">
+    <button class="login-btn" id="loginBtn" onclick="handleGoogleAuth()">
+      <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path fill="#FFFFFF" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#D8D4F7" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#EEEDFE" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#FFFFFF" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
+      Continuar con Google
+    </button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- App -->
+<div id="appScreen" class="app-shell hidden">
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <div class="logo-sub">Ariabo</div>
+        <div class="logo-main">CFO</div>
+      </div>
+      <div class="header-right">
+        <span class="user-badge" id="userBadge"></span>
+        <button class="btn-sm" onclick="exportCSV()">CSV</button>
+        <button class="btn-sm" onclick="handleLogout()">Salir</button>
+      </div>
+    </div>
+    <div class="month-nav">
+      <button onclick="changeMonth(-1)" aria-label="Mes anterior">&lt;</button>
+      <div class="month-label" id="monthLabel"></div>
+      <button onclick="changeMonth(1)" aria-label="Mes siguiente">&gt;</button>
+    </div>
+  </div>
+  <div class="scroll-area">
+    <div class="content" id="content"></div>
+  </div>
+</div>
+
+<!-- Bottom nav -->
+<div id="bottomNav" class="bottom-nav hidden">
+  <button class="nav-btn active" id="navSummary" onclick="showView('summary')" aria-label="Resumen">
+    <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="8"/><rect x="13" y="6" width="3" height="12"/></svg>
+    <span class="label">Resumen</span>
+  </button>
+  <button class="nav-btn" id="navList" onclick="showView('list')" aria-label="Gastos">
+    <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+    <span class="label">Gastos</span>
+  </button>
+  <button class="fab" onclick="showView('add')" aria-label="Agregar gasto">+</button>
+  <button class="nav-btn" id="navBudget" onclick="showView('budget')" aria-label="Presupuesto">
+    <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+    <span class="label">Presupuesto</span>
+  </button>
+  <button class="nav-btn" id="navIncome" onclick="showView('income')" aria-label="Ingresos">
+    <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="12" cy="12" r="2.5"/></svg>
+    <span class="label">Ingresos</span>
+  </button>
+</div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
